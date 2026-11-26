@@ -1,0 +1,1699 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#829B83">
+<title>StoryFinder</title>
+
+<style>
+:root {
+    --sage: #829B83;
+    --sage-dark: #526D55;
+    --sage-light: #E5EDE3;
+    --background: #F3F6F0;
+    --white: #FFFFFF;
+    --dark: #344638;
+    --muted: #718074;
+    --border: #CCD8CA;
+    --shadow: 0 4px 15px rgba(55, 80, 58, .10);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0 0 90px;
+    font-family: Arial, sans-serif;
+    color: var(--dark);
+    background: var(--background);
+    text-align: center;
+}
+
+h1, h2, h3 { color: var(--sage-dark); }
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+
+p { line-height: 1.5; }
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 17px;
+    background: var(--sage-dark);
+    color: white;
+    font-size: 23px;
+    font-weight: bold;
+    text-align: left;
+    box-shadow: var(--shadow);
+}
+
+.screen {
+    display: none;
+    width: calc(100% - 24px);
+    max-width: 850px;
+    min-height: 350px;
+    margin: 20px auto;
+    padding: 28px 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--white);
+    box-shadow: var(--shadow);
+}
+
+#welcomeScreen { display: block; }
+
+button {
+    margin: 6px;
+    padding: 13px 19px;
+    border: 1px solid var(--sage-dark);
+    border-radius: 9px;
+    background: var(--sage);
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--sage-dark);
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.main-button {
+    width: 90%;
+    max-width: 390px;
+    padding: 15px;
+    background: var(--sage-dark);
+}
+
+.soft-button {
+    background: var(--sage-light);
+    color: var(--sage-dark);
+    border-color: var(--border);
+}
+
+.soft-button:hover {
+    background: #D4E1D2;
+    color: var(--dark);
+}
+
+input {
+    max-width: 90%;
+    margin: 8px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: 2px solid var(--sage);
+}
+
+.mini-photo {
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    height: 150px;
+    margin: 16px auto;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.small-text {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.tagline {
+    color: var(--muted);
+    max-width: 450px;
+    margin: 0 auto 20px;
+}
+
+.divider {
+    width: 80%;
+    height: 1px;
+    margin: 25px auto;
+    background: var(--border);
+}
+
+/* PROFILE PICTURES */
+
+.avatar-preview {
+    display: flex;
+    width: 120px;
+    height: 120px;
+    margin: 16px auto;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 4px solid var(--sage);
+    border-radius: 50%;
+    background: var(--sage-light);
+    font-size: 48px;
+}
+
+.avatar-preview img,
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 360px;
+    margin: 15px auto;
+}
+
+.avatar-choice {
+    display: flex;
+    aspect-ratio: 1;
+    margin: 0;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--sage-light);
+    font-size: 30px;
+}
+
+.avatar-choice.selected-avatar {
+    border: 3px solid var(--sage-dark);
+    background: #D1E0CE;
+}
+
+.profile-avatar {
+    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px solid var(--sage);
+    border-radius: 50%;
+    background: var(--sage-light);
+    font-size: 25px;
+}
+
+.profile-card {
+    max-width: 450px;
+    margin: 12px auto;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #F8FAF6;
+}
+
+.profile-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-label {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 17px;
+    border-radius: 8px;
+    background: var(--sage);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.upload-input { display: none; }
+
+/* CAMERA */
+
+.camera-area {
+    max-width: 450px;
+    margin: 15px auto;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background);
+}
+
+.camera-area video {
+    display: none;
+    width: 100%;
+    max-height: 320px;
+    border-radius: 8px;
+    background: #222;
+    object-fit: cover;
+}
+
+.camera-message {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* RECOMMENDATIONS */
+
+.book {
+    max-width: 480px;
+    margin: 14px auto;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #F8FAF6;
+    text-align: left;
+}
+
+.book h3 { margin-bottom: 5px; }
+.book p { color: var(--muted); }
+
+/* QUESTIONS */
+
+.choice {
+    display: block;
+    width: 90%;
+    max-width: 440px;
+    margin: 9px auto;
+    border: 1px solid var(--border);
+    background: var(--sage-light);
+    color: var(--dark);
+}
+
+.choice.selected {
+    border: 2px solid var(--sage-dark);
+    background: #C8DAC6;
+}
+
+/* BOTTOM NAVIGATION */
+
+#appNav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    width: 100%;
+    padding: 9px 4px;
+    justify-content: space-around;
+    border-top: 1px solid var(--border);
+    background: white;
+    box-shadow: 0 -3px 12px rgba(0,0,0,.08);
+}
+
+.nav-button {
+    min-width: 55px;
+    margin: 0;
+    padding: 8px 6px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.nav-button:hover,
+.nav-button.active {
+    background: var(--sage-light);
+    color: var(--sage-dark);
+}
+
+.nav-icon {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 21px;
+}
+
+@media(max-width: 600px) {
+    .screen {
+        margin: 12px auto;
+        padding: 22px 14px;
+    }
+
+    h1 { font-size: 24px; }
+
+    .nav-button {
+        min-width: 52px;
+        font-size: 11px;
+    }
+
+    .avatar-grid { max-width: 310px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-header">StoryFinder</div>
+
+<!-- WELCOME SCREEN -->
+
+<div id="welcomeScreen" class="screen">
+    <h1>Welcome to StoryFinder</h1>
+    <p class="tagline">Find your next favourite book, movie or TV show.</p>
+
+    <img class="mini-photo"
+    src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1000&q=80"
+    alt="Bookshelf">
+
+    <button class="main-button" onclick="showProfile()">Get Started</button>
+</div>
+
+<!-- PROFILE SCREEN -->
+
+<div id="profile" class="screen">
+    <h1>Your Profiles</h1>
+    <p>Create a profile or choose one you already have.</p>
+
+    <h2>Create a Profile</h2>
+    <input id="nameInput" placeholder="Enter your name">
+
+    <p id="nameMessage" class="small-text"></p>
+
+    <h3>Choose a Profile Picture</h3>
+    <div id="profilePicturePreview" class="avatar-preview">📚</div>
+    <div id="profileAvatarChoices" class="avatar-grid"></div>
+
+    <h3>Take or Upload a Picture</h3>
+
+    <div class="camera-area">
+        <video id="profileVideo" autoplay playsinline></video>
+        <p id="profileCameraMessage" class="camera-message">
+            You can use your camera to take a profile picture.
+        </p>
+        <button class="soft-button" onclick="startCamera('profile')">
+            Open Camera
+        </button>
+        <button onclick="capturePhoto('profile')" id="profileCaptureButton" disabled>
+            Take Picture
+        </button>
+        <button class="soft-button" onclick="stopCamera('profile')" id="profileStopButton" disabled>
+            Close Camera
+        </button>
+    </div>
+
+    <label class="upload-label" for="profileUpload">Upload a Picture</label>
+    <input class="upload-input" type="file" id="profileUpload" accept="image/*">
+
+    <br>
+    <button class="main-button" onclick="saveProfile()">Save Profile</button>
+
+    <div class="divider"></div>
+
+    <h2>Saved Profiles</h2>
+    <div id="savedProfiles"></div>
+
+    <button class="soft-button" onclick="showWelcome()">Back</button>
+</div>
+
+<!-- EDIT PICTURE SCREEN -->
+
+<div id="pictureScreen" class="screen">
+    <h1>Change Profile Picture</h1>
+    <p id="pictureScreenName"></p>
+
+    <div id="editPicturePreview" class="avatar-preview">📚</div>
+
+    <h3>Choose a Picture</h3>
+    <div id="editAvatarChoices" class="avatar-grid"></div>
+
+    <div class="camera-area">
+        <video id="editVideo" autoplay playsinline></video>
+        <p id="editCameraMessage" class="camera-message">
+            Take a new picture using your camera.
+        </p>
+        <button class="soft-button" onclick="startCamera('edit')">
+            Open Camera
+        </button>
+        <button onclick="capturePhoto('edit')" id="editCaptureButton" disabled>
+            Take Picture
+        </button>
+        <button class="soft-button" onclick="stopCamera('edit')" id="editStopButton" disabled>
+            Close Camera
+        </button>
+    </div>
+
+    <label class="upload-label" for="editPictureUpload">Upload a Picture</label>
+    <input class="upload-input" type="file" id="editPictureUpload" accept="image/*">
+
+    <br>
+    <button class="main-button" onclick="savePictureChange()">Save Picture</button>
+    <button class="soft-button" onclick="goHome()">Cancel</button>
+</div>
+
+<!-- HOME SCREEN -->
+
+<div id="homeScreen" class="screen">
+    <div id="homeAvatar" class="avatar-preview">📚</div>
+    <h1 id="welcomeName"></h1>
+
+    <p class="tagline">What would you like to discover today?</p>
+
+    <button class="soft-button" onclick="editProfilePicture()">
+        Change Profile Picture
+    </button>
+
+    <img class="mini-photo"
+    src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80"
+    alt="Books">
+
+    <h2>Build Your Personality Profile</h2>
+    <p>Answer a few questions so we can find recommendations for you.</p>
+
+    <button class="main-button" onclick="startQuestionnaire()">
+        Build My Personality Profile
+    </button>
+
+    <br>
+    <button class="soft-button" onclick="startExtraQuestions()">
+        Answer More Questions (Optional)
+    </button>
+
+    <div class="divider"></div>
+
+    <h2>Explore</h2>
+
+    <button class="main-button" onclick="findBooks()">Find a Book</button>
+    <br>
+    <button class="main-button" onclick="findMovies()">Find a Movie</button>
+    <br>
+    <button class="main-button" onclick="findTVShows()">Find a TV Show</button>
+
+    <div class="divider"></div>
+    <button class="soft-button" onclick="showProfile()">Switch Profile</button>
+</div>
+
+<!-- QUESTIONNAIRE -->
+
+<div id="questionnaire" class="screen">
+    <h1 id="surveyTitle">Let's Get to Know You</h1>
+    <h2 id="questionText"></h2>
+    <p id="questionHint"></p>
+
+    <div id="answerArea"></div>
+
+    <button class="main-button" onclick="nextQuestion()">Next</button>
+    <button class="soft-button" onclick="goHome()">Cancel</button>
+</div>
+
+<!-- BOOKS -->
+
+<div id="bookScreen" class="screen">
+    <h1>Book Recommendations</h1>
+    <img class="mini-photo"
+    src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=1000&q=80"
+    alt="Reading">
+
+    <div id="bookResults"></div>
+
+    <button class="main-button" onclick="showMoreBooks()">Show Me More</button>
+    <button class="soft-button" onclick="startExtraQuestions()">Improve Recommendations</button>
+    <button class="soft-button" onclick="goHome()">Back to Home</button>
+</div>
+
+<!-- MOVIES -->
+
+<div id="movieScreen" class="screen">
+    <h1>Movie Recommendations</h1>
+    <img class="mini-photo"
+    src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1000&q=80"
+    alt="Movie theatre">
+
+    <div id="movieResults"></div>
+
+    <button class="main-button" onclick="showMoreMovies()">Show Me More</button>
+    <button class="soft-button" onclick="startExtraQuestions()">Improve Recommendations</button>
+    <button class="soft-button" onclick="goHome()">Back to Home</button>
+</div>
+
+<!-- TV SHOWS -->
+
+<div id="tvScreen" class="screen">
+    <h1>TV Show Recommendations</h1>
+    <img class="mini-photo"
+    src="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1000&q=80"
+    alt="Television">
+
+    <div id="tvResults"></div>
+
+    <button class="main-button" onclick="showMoreTVShows()">Show Me More</button>
+    <button class="soft-button" onclick="startExtraQuestions()">Improve Recommendations</button>
+    <button class="soft-button" onclick="goHome()">Back to Home</button>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+
+<div id="appNav">
+    <button class="nav-button active" id="navHome" onclick="goHome()">
+        <span class="nav-icon">⌂</span>Home
+    </button>
+    <button class="nav-button" id="navBooks" onclick="findBooks()">
+        <span class="nav-icon">📚</span>Books
+    </button>
+    <button class="nav-button" id="navMovies" onclick="findMovies()">
+        <span class="nav-icon">🎬</span>Movies
+    </button>
+    <button class="nav-button" id="navTV" onclick="findTVShows()">
+        <span class="nav-icon">▣</span>Shows
+    </button>
+    <button class="nav-button" id="navProfile" onclick="showProfile()">
+        <span class="nav-icon">●</span>Profiles
+    </button>
+</div>
+
+<script>
+
+/* VARIABLES */
+
+let selectedProfile = "";
+let currentQuestion = 0;
+let answers = [];
+let activeQuestions = [];
+let activeMode = "basic";
+
+let selectedAvatar = {
+    type: "preset",
+    emoji: "📚",
+    background: "#E5EDE3"
+};
+
+let editingAvatar = null;
+
+let cameraStreams = {
+    profile: null,
+    edit: null
+};
+
+let recommendationPages = {
+    books: 0,
+    movies: 0,
+    tv: 0
+};
+
+/* AVATAR OPTIONS */
+
+let avatarOptions = [
+    {emoji:"📚",background:"#E5EDE3"},
+    {emoji:"🌿",background:"#DCE8D9"},
+    {emoji:"🌻",background:"#EAEBD7"},
+    {emoji:"🪴",background:"#D7E5D5"},
+    {emoji:"🐈",background:"#E8E8E0"},
+    {emoji:"🌙",background:"#DFE5E9"},
+    {emoji:"🌷",background:"#E8E0E7"},
+    {emoji:"🦋",background:"#DCE7E8"},
+    {emoji:"🍃",background:"#DCE9D9"},
+    {emoji:"⭐",background:"#EAEBD7"},
+    {emoji:"🎧",background:"#E1E6E0"},
+    {emoji:"🌼",background:"#EAE9D7"}
+];
+
+/* SCREEN NAVIGATION */
+
+function hideAllScreens() {
+    let screens = [
+        "welcomeScreen","profile","pictureScreen",
+        "homeScreen","questionnaire","bookScreen",
+        "movieScreen","tvScreen"
+    ];
+
+    screens.forEach(function(id) {
+        document.getElementById(id).style.display = "none";
+    });
+}
+
+function scrollToTop() {
+    window.scrollTo(0,0);
+}
+
+function setNavActive(activeId) {
+    let ids = ["navHome","navBooks","navMovies","navTV","navProfile"];
+
+    ids.forEach(function(id) {
+        document.getElementById(id).classList.remove("active");
+    });
+
+    if (activeId) {
+        document.getElementById(activeId).classList.add("active");
+    }
+}
+
+function showWelcome() {
+    stopCamera("profile");
+    hideAllScreens();
+    document.getElementById("appNav").style.display = "none";
+    document.getElementById("welcomeScreen").style.display = "block";
+    scrollToTop();
+}
+
+function showProfile() {
+    stopCamera("profile");
+    stopCamera("edit");
+
+    hideAllScreens();
+    document.getElementById("appNav").style.display = "none";
+    document.getElementById("profile").style.display = "block";
+
+    selectedAvatar = {
+        type:"preset",
+        emoji:"📚",
+        background:"#E5EDE3"
+    };
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("nameMessage").textContent = "";
+    document.getElementById("profileUpload").value = "";
+
+    renderAvatarChoices("profileAvatarChoices","profilePicturePreview");
+    showSavedProfiles();
+    scrollToTop();
+}
+
+/* AVATAR DISPLAY */
+
+function renderAvatarChoices(containerId,previewId) {
+    let container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    let current = containerId === "editAvatarChoices"
+        ? editingAvatar : selectedAvatar;
+
+    avatarOptions.forEach(function(option) {
+        let button = document.createElement("button");
+        button.className = "avatar-choice";
+        button.textContent = option.emoji;
+        button.style.backgroundColor = option.background;
+
+        if (current && current.type === "preset" &&
+            current.emoji === option.emoji) {
+            button.classList.add("selected-avatar");
+        }
+
+        button.onclick = function() {
+            let newAvatar = {
+                type:"preset",
+                emoji:option.emoji,
+                background:option.background
+            };
+
+            if (containerId === "editAvatarChoices") {
+                editingAvatar = newAvatar;
+            } else {
+                selectedAvatar = newAvatar;
+            }
+
+            renderAvatarChoices(containerId,previewId);
+        };
+
+        container.appendChild(button);
+    });
+
+    showAvatarInElement(previewId,current);
+}
+
+function showAvatarInElement(elementId,avatar) {
+    let element = document.getElementById(elementId);
+    element.innerHTML = "";
+
+    if (!avatar) {
+        avatar = {
+            type:"preset",
+            emoji:"📚",
+            background:"#E5EDE3"
+        };
+    }
+
+    if (avatar.type === "image") {
+        let image = document.createElement("img");
+        image.src = avatar.src;
+        image.alt = "Profile picture";
+        element.appendChild(image);
+    } else {
+        element.textContent = avatar.emoji;
+        element.style.backgroundColor = avatar.background;
+    }
+}
+
+function createProfileAvatar(avatar) {
+    let element = document.createElement("div");
+    element.className = "profile-avatar";
+
+    if (avatar.type === "image") {
+        let image = document.createElement("img");
+        image.src = avatar.src;
+        image.alt = "Profile picture";
+        element.appendChild(image);
+    } else {
+        element.textContent = avatar.emoji;
+        element.style.backgroundColor = avatar.background;
+    }
+
+    return element;
+}
+
+/* CAMERA FUNCTIONS */
+
+async function startCamera(which) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera access is not supported here. Try opening StoryFinder in Chrome using your HTTPS website address.");
+        return;
+    }
+
+    stopCamera(which);
+
+    let videoId = which === "profile" ? "profileVideo" : "editVideo";
+    let messageId = which === "profile" ? "profileCameraMessage" : "editCameraMessage";
+    let captureId = which === "profile" ? "profileCaptureButton" : "editCaptureButton";
+    let stopId = which === "profile" ? "profileStopButton" : "editStopButton";
+
+    try {
+        let stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "user"
+            },
+            audio: false
+        });
+
+        cameraStreams[which] = stream;
+
+        let video = document.getElementById(videoId);
+        video.srcObject = stream;
+        video.style.display = "block";
+
+        document.getElementById(messageId).textContent =
+            "Camera is on. Position yourself and take a picture.";
+
+        document.getElementById(captureId).disabled = false;
+        document.getElementById(stopId).disabled = false;
+
+    } catch(error) {
+        console.error(error);
+
+        if (error.name === "NotAllowedError") {
+            alert("Camera permission was denied. Please allow camera access in your browser settings and try again.");
+        } else if (error.name === "NotFoundError") {
+            alert("No camera was found on this device.");
+        } else {
+            alert("The camera could not be opened. Please check your camera permissions.");
+        }
+    }
+}
+
+function capturePhoto(which) {
+    let videoId = which === "profile" ? "profileVideo" : "editVideo";
+    let video = document.getElementById(videoId);
+
+    if (!cameraStreams[which] || !video.videoWidth) {
+        alert("Please open the camera first.");
+        return;
+    }
+
+    let canvas = document.createElement("canvas");
+    let maxSize = 500;
+
+    let scale = Math.min(
+        maxSize / video.videoWidth,
+        maxSize / video.videoHeight,
+        1
+    );
+
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
+
+    let context = canvas.getContext("2d");
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    let pictureData = canvas.toDataURL("image/jpeg",0.75);
+
+    let newAvatar = {
+        type:"image",
+        src:pictureData
+    };
+
+    if (which === "profile") {
+        selectedAvatar = newAvatar;
+        showAvatarInElement("profilePicturePreview",selectedAvatar);
+    } else {
+        editingAvatar = newAvatar;
+        showAvatarInElement("editPicturePreview",editingAvatar);
+    }
+
+    stopCamera(which);
+
+    alert("Picture taken! Remember to save your profile picture.");
+}
+
+function stopCamera(which) {
+    let stream = cameraStreams[which];
+
+    if (stream) {
+        stream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+    }
+
+    cameraStreams[which] = null;
+
+    let videoId = which === "profile" ? "profileVideo" : "editVideo";
+    let messageId = which === "profile" ? "profileCameraMessage" : "editCameraMessage";
+    let captureId = which === "profile" ? "profileCaptureButton" : "editCaptureButton";
+    let stopId = which === "profile" ? "profileStopButton" : "editStopButton";
+
+    let video = document.getElementById(videoId);
+    video.srcObject = null;
+    video.style.display = "none";
+
+    document.getElementById(captureId).disabled = true;
+    document.getElementById(stopId).disabled = true;
+
+    document.getElementById(messageId).textContent =
+        "Camera is closed.";
+}
+
+/* UPLOAD PICTURES */
+
+function uploadPicture(fileInputId,isEditing) {
+    let file = document.getElementById(fileInputId).files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("Please choose an image file.");
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(event) {
+        let image = new Image();
+
+        image.onload = function() {
+            let canvas = document.createElement("canvas");
+            let maxSize = 500;
+
+            let scale = Math.min(
+                maxSize / image.width,
+                maxSize / image.height,
+                1
+            );
+
+            canvas.width = image.width * scale;
+            canvas.height = image.height * scale;
+
+            let context = canvas.getContext("2d");
+            context.drawImage(image,0,0,canvas.width,canvas.height);
+
+            let newAvatar = {
+                type:"image",
+                src:canvas.toDataURL("image/jpeg",0.75)
+            };
+
+            if (isEditing) {
+                editingAvatar = newAvatar;
+                showAvatarInElement("editPicturePreview",editingAvatar);
+            } else {
+                selectedAvatar = newAvatar;
+                showAvatarInElement("profilePicturePreview",selectedAvatar);
+            }
+        };
+
+        image.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+document.getElementById("profileUpload").addEventListener("change",function() {
+    uploadPicture("profileUpload",false);
+});
+
+document.getElementById("editPictureUpload").addEventListener("change",function() {
+    uploadPicture("editPictureUpload",true);
+});
+
+/* PROFILE STORAGE */
+
+function getProfiles() {
+    return JSON.parse(localStorage.getItem("profiles")) || [];
+}
+
+function getProfilePictures() {
+    return JSON.parse(localStorage.getItem("profilePictures")) || {};
+}
+
+function getProfilePicture(name) {
+    let pictures = getProfilePictures();
+
+    return pictures[name] || {
+        type:"preset",
+        emoji:"📚",
+        background:"#E5EDE3"
+    };
+}
+
+/* SAVE PROFILE - DUPLICATE NAME CHECK */
+
+function saveProfile() {
+    let name = document.getElementById("nameInput").value.trim();
+    let message = document.getElementById("nameMessage");
+
+    if (name === "") {
+        message.textContent = "Please enter a profile name.";
+        return;
+    }
+
+    let profiles = getProfiles();
+
+    let duplicate = profiles.some(function(existingName) {
+        return existingName.toLowerCase() === name.toLowerCase();
+    });
+
+    if (duplicate) {
+        message.textContent = "That profile name is already taken. Please choose another name.";
+        alert("A profile with that name already exists!");
+        return;
+    }
+
+    profiles.push(name);
+
+    let pictures = getProfilePictures();
+    pictures[name] = selectedAvatar;
+
+    try {
+        localStorage.setItem("profilePictures",JSON.stringify(pictures));
+        localStorage.setItem("profiles",JSON.stringify(profiles));
+    } catch(error) {
+        alert("There isn't enough browser storage to save that picture. Try a smaller image.");
+        return;
+    }
+
+    message.textContent = "";
+    document.getElementById("nameInput").value = "";
+    document.getElementById("profileUpload").value = "";
+
+    showSavedProfiles();
+    alert("Profile created successfully!");
+}
+
+/* DISPLAY SAVED PROFILES */
+
+function showSavedProfiles() {
+    let profiles = getProfiles();
+    let display = document.getElementById("savedProfiles");
+
+    display.innerHTML = "";
+
+    if (profiles.length === 0) {
+        display.textContent = "No profiles have been created yet.";
+        return;
+    }
+
+    profiles.forEach(function(name) {
+        let card = document.createElement("div");
+        card.className = "profile-card";
+
+        let row = document.createElement("div");
+        row.className = "profile-row";
+
+        row.appendChild(createProfileAvatar(getProfilePicture(name)));
+
+        let selectButton = document.createElement("button");
+        selectButton.textContent = name;
+        selectButton.onclick = function() {
+            selectProfile(name);
+        };
+
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "soft-button";
+
+        deleteButton.onclick = function() {
+            if (!confirm("Delete the profile for " + name + "?")) return;
+
+            let updatedProfiles = getProfiles().filter(function(profileName) {
+                return profileName !== name;
+            });
+
+            localStorage.setItem("profiles",JSON.stringify(updatedProfiles));
+
+            let pictures = getProfilePictures();
+            delete pictures[name];
+            localStorage.setItem("profilePictures",JSON.stringify(pictures));
+
+            let allAnswers = JSON.parse(localStorage.getItem("personalityAnswers")) || {};
+            delete allAnswers[name];
+            localStorage.setItem("personalityAnswers",JSON.stringify(allAnswers));
+
+            let allExtra = JSON.parse(localStorage.getItem("extraAnswers")) || {};
+            delete allExtra[name];
+            localStorage.setItem("extraAnswers",JSON.stringify(allExtra));
+
+            showSavedProfiles();
+        };
+
+        row.appendChild(selectButton);
+        row.appendChild(deleteButton);
+
+        card.appendChild(row);
+        display.appendChild(card);
+    });
+}
+
+/* SELECT PROFILE */
+
+function selectProfile(name) {
+    selectedProfile = name;
+
+    document.getElementById("welcomeName").textContent =
+        "Welcome, " + name + "!";
+
+    showAvatarInElement("homeAvatar",getProfilePicture(name));
+
+    recommendationPages = {books:0,movies:0,tv:0};
+
+    goHome();
+}
+
+/* CHANGE PROFILE PICTURE */
+
+function editProfilePicture() {
+    if (!selectedProfile) return;
+
+    stopCamera("profile");
+    editingAvatar = getProfilePicture(selectedProfile);
+
+    document.getElementById("pictureScreenName").textContent =
+        "Changing the picture for " + selectedProfile;
+
+    document.getElementById("editPictureUpload").value = "";
+
+    hideAllScreens();
+    document.getElementById("pictureScreen").style.display = "block";
+
+    renderAvatarChoices("editAvatarChoices","editPicturePreview");
+    scrollToTop();
+}
+
+function savePictureChange() {
+    if (!selectedProfile || !editingAvatar) return;
+
+    let pictures = getProfilePictures();
+    pictures[selectedProfile] = editingAvatar;
+
+    try {
+        localStorage.setItem("profilePictures",JSON.stringify(pictures));
+    } catch(error) {
+        alert("The picture could not be saved. Please choose a smaller picture.");
+        return;
+    }
+
+    showAvatarInElement("homeAvatar",editingAvatar);
+    goHome();
+}
+
+/* QUESTIONS */
+
+let questions = [
+    {
+        question:"How would you describe your personality?",
+        choices:[
+            "Happy and energetic",
+            "Quiet and thoughtful",
+            "Funny and outgoing",
+            "Creative and imaginative"
+        ]
+    },
+    {
+        question:"What are your favourite hobbies?",
+        choices:[
+            "Reading",
+            "Drawing or painting",
+            "Playing sports",
+            "Playing video games",
+            "Other"
+        ]
+    },
+    {
+        question:"Do you prefer spending time alone or with friends?",
+        choices:[
+            "Mostly alone",
+            "Mostly with friends",
+            "A bit of both"
+        ]
+    },
+    {
+        question:"What sports do you enjoy?",
+        choices:[
+            "Basketball",
+            "Soccer",
+            "Hockey",
+            "Other sports",
+            "I don't play sports"
+        ]
+    },
+    {
+        question:"What video games do you play?",
+        choices:[
+            "Minecraft",
+            "Roblox",
+            "Fortnite",
+            "Other games",
+            "I don't play video games"
+        ]
+    },
+    {
+        question:"What kinds of stories do you enjoy?",
+        choices:[
+            "Fantasy",
+            "Mystery",
+            "Romance",
+            "Horror",
+            "Comedy",
+            "Adventure",
+            "Other"
+        ],
+        multiple:true
+    }
+];
+
+let extraQuestions = [
+    {
+        question:"What kind of main character do you enjoy?",
+        choices:[
+            "A brave hero",
+            "A funny character",
+            "A mysterious character",
+            "An ordinary person"
+        ]
+    },
+    {
+        question:"What kind of story do you prefer?",
+        choices:[
+            "Something realistic",
+            "Something magical",
+            "Something surprising",
+            "Something emotional"
+        ]
+    },
+    {
+        question:"How do you like your stories?",
+        choices:[
+            "Fast-paced and exciting",
+            "Slow and relaxing",
+            "Full of twists and surprises",
+            "Funny and lighthearted"
+        ]
+    },
+    {
+        question:"What kind of ending do you prefer?",
+        choices:[
+            "A happy ending",
+            "A surprising ending",
+            "A sad or emotional ending",
+            "An ending that makes me think"
+        ]
+    }
+];
+
+function startQuestionnaire() {
+    if (!selectedProfile) return;
+
+    activeMode = "basic";
+    activeQuestions = questions;
+    answers = [];
+    currentQuestion = 0;
+
+    document.getElementById("surveyTitle").textContent =
+        "Personality Profile";
+
+    hideAllScreens();
+    document.getElementById("questionnaire").style.display = "block";
+
+    showQuestion();
+    scrollToTop();
+}
+
+function startExtraQuestions() {
+    if (!selectedProfile) return;
+
+    activeMode = "extra";
+    activeQuestions = extraQuestions;
+
+    let saved = JSON.parse(localStorage.getItem("extraAnswers")) || {};
+    answers = saved[selectedProfile] || [];
+    currentQuestion = 0;
+
+    document.getElementById("surveyTitle").textContent =
+        "More About You";
+
+    hideAllScreens();
+    document.getElementById("questionnaire").style.display = "block";
+
+    showQuestion();
+    scrollToTop();
+}
+
+function showQuestion() {
+    let question = activeQuestions[currentQuestion];
+
+    document.getElementById("questionText").textContent = question.question;
+    document.getElementById("questionHint").textContent =
+        question.multiple ? "Choose as many as you like." : "Choose one answer.";
+
+    let area = document.getElementById("answerArea");
+    area.innerHTML = "";
+
+    if (question.multiple && !Array.isArray(answers[currentQuestion])) {
+        answers[currentQuestion] = [];
+    }
+
+    question.choices.forEach(function(choice) {
+        let button = document.createElement("button");
+        button.className = "choice";
+        button.textContent = choice;
+
+        button.onclick = function() {
+            if (question.multiple) {
+                let selected = answers[currentQuestion];
+                let index = selected.indexOf(choice);
+
+                if (index === -1) {
+                    selected.push(choice);
+                    button.classList.add("selected");
+                } else {
+                    selected.splice(index,1);
+                    button.classList.remove("selected");
+                }
+
+                if (choice === "Other") {
+                    showOtherInput(selected.includes("Other"));
+                }
+            } else {
+                answers[currentQuestion] = choice;
+
+                area.querySelectorAll("button").forEach(function(other) {
+                    other.classList.remove("selected");
+                });
+
+                button.classList.add("selected");
+
+                if (["Other","Other sports","Other games"].includes(choice)) {
+                    showOtherInput(true);
+                } else {
+                    showOtherInput(false);
+                }
+            }
+        };
+
+        let selected = answers[currentQuestion];
+
+        if (question.multiple && selected.includes(choice)) {
+            button.classList.add("selected");
+        }
+
+        if (!question.multiple && selected === choice) {
+            button.classList.add("selected");
+        }
+
+        area.appendChild(button);
+    });
+
+    if (question.multiple && answers[currentQuestion].includes("Other")) {
+        showOtherInput(true);
+    }
+
+    if (!question.multiple &&
+        ["Other","Other sports","Other games"].includes(answers[currentQuestion])) {
+        showOtherInput(true);
+    }
+}
+
+function showOtherInput(show) {
+    let oldInput = document.getElementById("otherInput");
+    let oldValue = oldInput ? oldInput.value : "";
+
+    if (oldInput) oldInput.remove();
+
+    if (show) {
+        let input = document.createElement("input");
+        input.id = "otherInput";
+        input.placeholder = "Type your answer...";
+        input.value = oldValue;
+        document.getElementById("answerArea").appendChild(input);
+    }
+}
+
+function nextQuestion() {
+    let question = activeQuestions[currentQuestion];
+
+    if (question.multiple) {
+        let selected = answers[currentQuestion];
+
+        if (!selected || selected.length === 0) {
+            alert("Please choose at least one answer.");
+            return;
+        }
+
+        if (selected.includes("Other")) {
+            let input = document.getElementById("otherInput");
+
+            if (!input || !input.value.trim()) {
+                alert("Please type your other answer.");
+                return;
+            }
+
+            answers[currentQuestion] = selected.filter(function(item) {
+                return item !== "Other";
+            });
+
+            answers[currentQuestion].push(input.value.trim());
+        }
+    } else {
+        let answer = answers[currentQuestion];
+
+        if (!answer) {
+            alert("Please choose an answer.");
+            return;
+        }
+
+        if (["Other","Other sports","Other games"].includes(answer)) {
+            let input = document.getElementById("otherInput");
+
+            if (!input || !input.value.trim()) {
+                alert("Please type your other answer.");
+                return;
+            }
+
+            answers[currentQuestion] = input.value.trim();
+        }
+    }
+
+    currentQuestion++;
+
+    if (currentQuestion < activeQuestions.length) {
+        showQuestion();
+        scrollToTop();
+    } else {
+        if (activeMode === "basic") {
+            let saved = JSON.parse(localStorage.getItem("personalityAnswers")) || {};
+            saved[selectedProfile] = answers;
+            localStorage.setItem("personalityAnswers",JSON.stringify(saved));
+            alert("Your personality profile has been saved!");
+        } else {
+            let saved = JSON.parse(localStorage.getItem("extraAnswers")) || {};
+            saved[selectedProfile] = answers;
+            localStorage.setItem("extraAnswers",JSON.stringify(saved));
+            alert("Your extra answers have been saved!");
+        }
+
+        goHome();
+    }
+}
+
+/* GET GENRES */
+
+function getGenres() {
+    let saved = JSON.parse(localStorage.getItem("personalityAnswers")) || {};
+    let profileAnswers = saved[selectedProfile];
+
+    if (!profileAnswers) return null;
+
+    return profileAnswers[5];
+}
+
+/* RECOMMENDATION DATA */
+
+let bookRecommendations = {
+    "Fantasy":[
+        ["Harry Potter and the Philosopher's Stone","A magical adventure filled with friendship."],
+        ["Percy Jackson and the Lightning Thief","A young hero discovers Greek mythology."],
+        ["The Hobbit","An unexpected journey through a magical world."],
+        ["The School for Good and Evil","Two friends enter a school for fairy-tale characters."]
+    ],
+    "Mystery":[
+        ["A Good Girl's Guide to Murder","A student investigates a mysterious case."],
+        ["The Inheritance Games","A girl inherits a fortune and solves puzzles."],
+        ["Nancy Drew","A clever detective solves mysterious cases."],
+        ["The Westing Game","A group of people must solve a mysterious puzzle."]
+    ],
+    "Romance":[
+        ["To All the Boys I've Loved Before","A story about letters, friendship, and love."],
+        ["The Summer I Turned Pretty","A summer filled with friendship and changing feelings."],
+        ["Better Than the Movies","A romantic comedy about unexpected feelings."]
+    ],
+    "Horror":[
+        ["Coraline","A strange door leads to an unusual world."],
+        ["Small Spaces","A spooky adventure involving mysterious scarecrows."],
+        ["The Graveyard Book","A boy grows up in a mysterious place."],
+        ["Wait Till Helen Comes","A spooky story about a mysterious ghost."]
+    ],
+    "Comedy":[
+        ["Diary of a Wimpy Kid","A funny look at school and everyday life."],
+        ["Dork Diaries","Funny stories about friendships and school."],
+        ["The Terrible Two","Two pranksters team up for hilarious tricks."]
+    ],
+    "Adventure":[
+        ["The Hunger Games","A thrilling survival story."],
+        ["The Maze Runner","Teenagers try to escape a mysterious maze."],
+        ["Hatchet","A teenager must survive alone in the wilderness."]
+    ]
+};
+
+let movieRecommendations = {
+    "Fantasy":[
+        ["Harry Potter and the Sorcerer's Stone","A young wizard discovers a magical world."],
+        ["The Chronicles of Narnia","Children discover a magical land."],
+        ["How to Train Your Dragon","A boy forms an unexpected friendship with a dragon."],
+        ["The Princess Bride","A fantasy adventure filled with humour and romance."]
+    ],
+    "Mystery":[
+        ["Enola Holmes","A clever young detective solves a mystery."],
+        ["Knives Out","A detective investigates a mysterious death."],
+        ["Nancy Drew","A young detective takes on a mysterious case."]
+    ],
+    "Romance":[
+        ["To All the Boys I've Loved Before","A teen's secret letters cause unexpected romance."],
+        ["The Princess Diaries","A teenager discovers she is royalty."],
+        ["Flipped","Two young people see their friendship differently."]
+    ],
+    "Horror":[
+        ["Coraline","A girl discovers a strange and spooky world."],
+        ["Monster House","Three kids investigate a mysterious house."],
+        ["Goosebumps","Monsters come to life in a spooky adventure."]
+    ],
+    "Comedy":[
+        ["The Parent Trap","Twins secretly switch places."],
+        ["Night at the Museum","Museum exhibits come to life at night."],
+        ["Home Alone","A kid is accidentally left home alone."]
+    ],
+    "Adventure":[
+        ["Jumanji","A mysterious game brings an adventure to life."],
+        ["The Goonies","Friends go on a treasure-hunting adventure."],
+        ["Journey to the Center of the Earth","An expedition discovers a hidden world."]
+    ]
+};
+
+let tvRecommendations = {
+    "Fantasy":[
+        ["Avatar: The Last Airbender","A young hero must master the elements and save the world."],
+        ["The Dragon Prince","A magical adventure involving dragons and kingdoms."],
+        ["Hilda","A curious girl explores a magical world."],
+        ["The Owl House","A girl discovers a magical world and learns witchcraft."]
+    ],
+    "Mystery":[
+        ["A Series of Unfortunate Events","Three siblings uncover secrets about their family."],
+        ["The Mysterious Benedict Society","A group of clever children solve unusual mysteries."],
+        ["Gravity Falls","Twins discover strange secrets in a mysterious town."],
+        ["Scooby-Doo, Where Are You!","A group of friends solves spooky mysteries."]
+    ],
+    "Romance":[
+        ["Heartstopper","Two students discover friendship and young love."],
+        ["Anne with an E","An imaginative girl finds a place to belong."],
+        ["The Baby-Sitters Club","Friends start a babysitting business together."]
+    ],
+    "Horror":[
+        ["Goosebumps","Young people experience spooky and mysterious adventures."],
+        ["Are You Afraid of the Dark?","A group shares frightening stories."],
+        ["The Haunting Hour","A collection of spooky stories."]
+    ],
+    "Comedy":[
+        ["The Good Place","A woman finds herself in a very unusual afterlife."],
+        ["Modern Family","Three connected families get into funny situations."],
+        ["The Thundermans","A family tries to balance normal life and superpowers."],
+        ["The Amazing World of Gumball","A blue cat gets into ridiculous situations."]
+    ],
+    "Adventure":[
+        ["Lost in Space","A family must survive after becoming stranded in space."],
+        ["One Piece","A group of pirates searches for a legendary treasure."],
+        ["The Legend of Korra","A young hero goes on adventures to protect the world."],
+        ["The Mandalorian","A mysterious bounty hunter travels across the galaxy."]
+    ]
+};
+
+/* DISPLAY RECOMMENDATIONS */
+
+function displayRecommendations(type,page) {
+    let genres = getGenres();
+    let recommendations;
+    let results;
+
+    if (type === "books") {
+        recommendations = bookRecommendations;
+        results = document.getElementById("bookResults");
+    } else if (type === "movies") {
+        recommendations = movieRecommendations;
+        results = document.getElementById("movieResults");
+    } else {
+        recommendations = tvRecommendations;
+        results = document.getElementById("tvResults");
+    }
+
+    results.innerHTML = "";
+
+    if (!genres || genres.length === 0) {
+        results.textContent =
+            "Please complete your personality profile first to get recommendations.";
+        return;
+    }
+
+    let heading = document.createElement("h2");
+    heading.textContent = "Suggestions for " + selectedProfile;
+    results.appendChild(heading);
+
+    let found = false;
+
+    genres.forEach(function(genre) {
+        let items = recommendations[genre];
+
+        if (!items) return;
+
+        found = true;
+
+        let genreHeading = document.createElement("h2");
+        genreHeading.textContent = genre;
+        results.appendChild(genreHeading);
+
+        let start = (page * 2) % items.length;
+
+        for (let i=0; i<Math.min(2,items.length); i++) {
+            let item = items[(start+i)%items.length];
+
+            let card = document.createElement("div");
+            card.className = "book";
+
+            let title = document.createElement("h3");
+            title.textContent = item[0];
+
+            let description = document.createElement("p");
+            description.textContent = item[1];
+
+            card.appendChild(title);
+            card.appendChild(description);
+            results.appendChild(card);
+        }
+    });
+
+    if (!found) {
+        results.textContent = "We don't have recommendations for those genres yet.";
+    }
+}
+
+/* BOOKS */
+
+function findBooks() {
+    hideAllScreens();
+    document.getElementById("bookScreen").style.display = "block";
+    document.getElementById("appNav").style.display = "flex";
+
+    setNavActive("navBooks");
+    recommendationPages.books = 0;
+    displayRecommendations("books",0);
+    scrollToTop();
+}
+
+function showMoreBooks() {
+    recommendationPages.books++;
+    displayRecommendations("books",recommendationPages.books);
+}
+
+/* MOVIES */
+
+function findMovies() {
+    hideAllScreens();
+    document.getElementById("movieScreen").style.display = "block";
+    document.getElementById("appNav").style.display = "flex";
+
+    setNavActive("navMovies");
+    recommendationPages.movies = 0;
+    displayRecommendations("movies",0);
+    scrollToTop();
+}
+
+function showMoreMovies() {
+    recommendationPages.movies++;
+    displayRecommendations("movies",recommendationPages.movies);
+}
+
+/* TV SHOWS */
+
+function findTVShows() {
+    hideAllScreens();
+    document.getElementById("tvScreen").style.display = "block";
+    document.getElementById("appNav").style.display = "flex";
+
+    setNavActive("navTV");
+    recommendationPages.tv = 0;
+    displayRecommendations("tv",0);
+    scrollToTop();
+}
+
+function showMoreTVShows() {
+    recommendationPages.tv++;
+    displayRecommendations("tv",recommendationPages.tv);
+}
+
+/* HOME */
+
+function goHome() {
+    stopCamera("profile");
+    stopCamera("edit");
+
+    hideAllScreens();
+    document.getElementById("homeScreen").style.display = "block";
+    document.getElementById("appNav").style.display = "flex";
+
+    if (selectedProfile) {
+        showAvatarInElement("homeAvatar",getProfilePicture(selectedProfile));
+    }
+
+    setNavActive("navHome");
+    scrollToTop();
+}
+
+/* START APP */
+
+renderAvatarChoices("profileAvatarChoices","profilePicturePreview");
+
+</script>
+
+</body>
+</html>
